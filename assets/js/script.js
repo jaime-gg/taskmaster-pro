@@ -35,7 +35,6 @@ var loadTasks = function() {
 
   // loop over object properties
   $.each(tasks, function(list, arr) {
-    console.log(list, arr);
     // then loop over sub-array
     arr.forEach(function(task) {
       createTask(task.text, task.date, list);
@@ -151,15 +150,21 @@ $(".card .list-group").sortable({
   tolerance: "pointer",
   helper: "clone",
   activate: function(event) {
+    $(this).addClass("dropover");
+    $(".bottom-trash").addClass("bottom-trash-drag");
   },
 
   deactivate: function(event) {
+    $(this).removeClass("dropover");
+    $(".bottom-trash").removeClass("bottom-trash-drag");
   },
 
   over: function(event) {
+    $(event.target).addClass("dropover-active");
   },
 
   out: function(event) {
+    $(event.target).removeClass("dropover-active");
   },
 
   update: function(event) {
@@ -203,16 +208,22 @@ $("#trash").droppable({
   tolerance: "touch",
   drop: function(event, ui) {
     ui.draggable.remove();
-    console.log("drop");
+    $(".bottom-trash").removeClass("bottom-trash-active");
   },
   over: function(event, ui) {
-    console.log("over");
+    console.log(ui);
+    $(".bottom-trash").addClass("bottom-trash-active");
   },
   out: function(event, ui) {
-    console.log("out");
+    $(".bottom-trash").removeClass("bottom-trash-active");
   }
 });
 
+setInterval(function () {
+  $(".card .list-group-item").each(function(index, el) {
+    auditTask(el);
+  });
+}, (1000 * 60)*30);
 
 $("#modalDueDate").datepicker({
   minDate: 1
